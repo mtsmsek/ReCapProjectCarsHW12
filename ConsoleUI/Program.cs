@@ -4,6 +4,7 @@ using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using System;
 
+
 namespace ConsoleUI
 {
     class Program
@@ -27,11 +28,15 @@ namespace ConsoleUI
 
 
 
-
-            foreach (var color in colorManager.GetAll())
+            var colorResult = colorManager.GetAll();
+            if (colorResult.Success)
             {
-                Console.WriteLine(color.ColorName);
+                foreach (var color in colorResult.Data )
+                {
+                    Console.WriteLine(color.ColorName);
+                }
             }
+          
         }
 
         private static void CarTest()
@@ -44,24 +49,34 @@ namespace ConsoleUI
             //carManager.Add(new Car { BrandId = 2, ColorId = 3, ModelYear = "Symbol", UnitPrice = 141000, Description = "Marka Renault rengi yeşil" });
             //carManager.Add(new Car { BrandId = 2, ColorId = 1, ModelYear = "Clio", UnitPrice = 180000, Description = "Renk : Kırmızı Marka: Renault" });
             //carManager.Delete(new Car { Id = 8 });
-            
 
-            foreach (var car in carManager.GetCarDetails())
+            var carResult = carManager.GetCarDetails();
+            if (carResult.Success)
             {
-                Console.WriteLine("Model: {0}\nMarka: {1}\nRenk: {2}\nFiyat: {3} ", car.ModelYear,car.BrandName,car.ColorName,car.UnitPrice);
+                foreach (var car in carResult.Data)
+                {
+                    Console.WriteLine("Model: {0}\nMarka: {1}\nRenk: {2}\nFiyat: {3} ", car.ModelYear, car.BrandName, car.ColorName, car.UnitPrice);
+                }
             }
+           
         }
 
         private static void BrandTest()
         {
             BrandManager brandManager = new BrandManager(new EfBrandDal());
-            brandManager.Add(new Brand { BrandId = 1, BrandName = "Volkswagen" });
-            brandManager.Add(new Brand { BrandId = 2, BrandName = "Renault" });
+            brandManager.Add(new Brand { BrandName = "Volkswagen" });
+            brandManager.Add(new Brand {  BrandName = "Renault" });
 
-            foreach (var brand in brandManager.GetAll())
+
+            var brandResult = brandManager.GetAll();
+            if (brandResult.Success)
             {
-                Console.WriteLine(brand.BrandName);
+                foreach (var brand in brandResult.Data)
+                {
+                    Console.WriteLine(brand.BrandName);
+                }
             }
+         
         }
     }
 }

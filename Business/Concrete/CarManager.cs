@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -17,44 +19,65 @@ namespace Business.Concrete
             _icarDal = icarDal;
         }
 
-        public void Add(Car car)
+        public IResult Add(Car car)
         {
             if (car.ModelYear.Length>2 && car.UnitPrice>0)
             {
                 _icarDal.Add(car);
+                return new SuccessResult();
             }
             else
             {
-                Console.WriteLine("Araba adı 2 harften uzun değil ya da günlük fiyat 0'dan küçük)");
+               return  new ErrorResult(Messages.InvalidCarName);
             }
             
         }
 
 
-        public void Delete(Car car)
+        public IResult Delete(Car car)
         {
+            if (false)
+            {
+                return new ErrorResult();
+            }
             _icarDal.Delete(car);
+            return new SuccessResult(Messages.CarDeleted);
         }
 
-        public List<Car> GetAll()
+        public IDataResult<List<Car>> GetAll()
         {
-            return _icarDal.GetAll();
+            if (DateTime.Now.Hour == 18)
+            {
+                return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
+            }
+            return new SuccessDataResult<List<Car>>(_icarDal.GetAll());
         }
 
 
-        public List<Car> GetByUnitPrice(decimal min, decimal max)
+        public IDataResult<List<Car>> GetByUnitPrice(decimal min, decimal max)
         {
-            return _icarDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max);
+
+            return new SuccessDataResult<List<Car>>(_icarDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max));
         }
 
-        public List<CarDetailsDto> GetCarDetails()
+        public IDataResult<List<CarDetailsDto>> GetCarDetails()
         {
-            return _icarDal.GetCarDetails();
+            if (_icarDal.GetCarDetails()==null)
+            {
+                return new ErrorDataResult<List<CarDetailsDto>>(Messages.CarsNotFound);
+            }
+            return new SuccessDataResult<List<CarDetailsDto>>(_icarDal.GetCarDetails(),Messages.CarsListed);
         }
 
-        public void Update(Car car)
+        public IResult Update(Car car)
         {
+            
+            if (car.ModelYear.Length<=2)
+            {
+                return new ErrorResult();
+            }
             _icarDal.Update(car);
+            return new SuccessResult("Ürün güncellendi");
         }
     }
 }

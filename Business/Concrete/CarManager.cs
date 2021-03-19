@@ -72,10 +72,7 @@ namespace Business.Concrete
         public IResult Update(Car car)
         {
             
-            if (car.ModelYear.Length<=2)
-            {
-                return new ErrorResult();
-            }
+        
             _icarDal.Update(car);
             return new SuccessResult("Ürün güncellendi");
         }
